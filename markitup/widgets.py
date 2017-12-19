@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import posixpath
+import django
 from django import forms
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.core.urlresolvers import NoReverseMatch, reverse
@@ -71,7 +72,10 @@ class MarkItUpWidget(MarkupTextarea):
     def render(self, name, value, attrs=None):
         html = super(MarkItUpWidget, self).render(name, value, attrs)
 
-        final_attrs = self.build_attrs(attrs)
+        if django.VERSION < (1, 11):
+            final_attrs = self.build_attrs(attrs)
+        else:
+            final_attrs = self.build_attrs(self.attrs, attrs)
 
         try:
             preview_url = reverse('markitup_preview')
